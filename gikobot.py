@@ -1,12 +1,13 @@
 ﻿import sys
 import socket
+from random import randint
 
 ############
 # SETTINGS #
 ############
 network = 'irc.rizon.net'
 port = 6667
-channel = "#gikopoiTest"
+channel = "#gikopoi"
 userNameBot = "GikoBot"
 newLine = "\r\n"
 
@@ -40,17 +41,24 @@ class Message:
 def sendMessageToChannel(text):
 	irc.send("PRIVMSG " + channel + " :" + text + newLine)
 
+def getRandomKaomoji():
+	return kaomojiList[randint(0, len(kaomojiList)-1)]
+	
 #################
 # PROGRAM START #
 #################
+
+f = open("f:\mieiprogrammi\gikobot\kaomoji.txt", "r")
+kaomojiList = f.readlines()
+f.close()
 
 irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 irc.connect((network, port))
 irc.send("NICK " + userNameBot + newLine)
 irc.send("USER " + userNameBot + " 8 * : " + userNameBot + newLine)
 irc.send("JOIN " + channel + newLine)
-sendMessageToChannel("Hello, this is GikoBot. I will try my best "
-					"to participate constructively in your conversations." + newLine)
+#sendMessageToChannel("Hello, this is GikoBot. I will try my best "
+#					"to participate constructively in your conversations." + newLine)
 
 currentLine = ""
 
@@ -69,7 +77,9 @@ while True:
 				irc.send("QUIT" + newLine)
 				irc.close()
 				sys.exit(0)
-			else:
-				sendMessageToChannel("SHUT UP, " + msg.messageSenderUsername())
+			elif msg.messageContent() == "!kaomoji":
+				sendMessageToChannel(getRandomKaomoji())
+			#else:
+			#	sendMessageToChannel("SHUT UP, " + msg.messageSenderUsername())
 				
 		currentLine = ""
