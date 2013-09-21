@@ -70,6 +70,7 @@ while True:
 		msg = Message(currentLine)
 		if msg.isPing():
 			irc.send("PONG " + msg.pingContent() + newLine)
+			irc.send("JOIN " + channel + newLine) #in case i was ping'd before receiving all the MOTD (yotsubano.me does that, for example)
 		elif msg.isMessage():
 			if msg.messageContent() == "!quit":
 				sendMessageToChannel("SHUTTING DOWN")
