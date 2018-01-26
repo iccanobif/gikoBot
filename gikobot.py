@@ -126,19 +126,14 @@ while True:
         try:
             currentLine = currentLine[:-2] # remove '\r\n'
 	    currentLine = currentLine.decode("utf8")
-	    printDebug(currentLine)
             msg = Message(currentLine)
             if msg.isPing():
                 irc.send("PONG " + msg.pingContent() + newLine)
                 irc.send("JOIN " + channel + newLine) #in case i was ping'd before receiving all the MOTD (yotsubano.me does that, for example)
             elif msg.isMessage():
-                command = msg.messageContent().split(" ")[0].lower()
-#                if command == "!quit":
-#                    sendMessageToChannel("SHUTTING DOWN")
-#                    irc.send("PART " + channel + newLine)
-#                    irc.send("QUIT" + newLine)
-#                    irc.close()
-#                    sys.exit(0)
+	        printDebug(currentLine)
+                command = msg.messageContent().split(" ")[0].lower().strip()
+		#print("command", command)
                 if command == "!kaomoji":
                     sendMessageToChannel(getRandomKaomoji())
                 elif command == "!addquote":
@@ -167,7 +162,7 @@ while True:
                     input = msg.messageContent()[8:]
 		    input = re.sub("[^a-zA-Z0-9 ]", "", input)[0:20]
 		    print(input)
-		    output = os.popen("./figlet -d figletfonts \"" + input + "\"").readlines()
+		    output = os.popen("figlet -d figletfonts \"" + input + "\"").readlines()
 		    for line in output:
 		        sendMessageToChannel(line)
                         time.sleep(0.5)
@@ -184,6 +179,8 @@ while True:
                     print("finished dumping to", msg.messageSenderUsername())
                 elif command == "!pop":
 		    sendMessageToChannel("not implemented lol")
+                elif command == "\x01action":
+                    sendMessageToChannel("ouch")
 		
         except:
 	    traceback.print_exc()
