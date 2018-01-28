@@ -83,6 +83,8 @@ class MessageQueue:
         return len(self.queue) == 0
 
     def take(self):
+        if self.is_empty():
+            return None
         return self.queue.popleft()
 
     def put(self, e):
