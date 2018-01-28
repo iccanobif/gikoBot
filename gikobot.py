@@ -292,11 +292,11 @@ class GikoBot:
 
         db = sqlite3.connect("gikobot.sqlite")
         rows = db.execute(
-            "SELECT quote, timestamp, rowid, timestamp FROM quotes").fetchall()
+            "SELECT quote, rowid, timestamp FROM quotes").fetchall()
         db.close()
         for row in rows:
             for line in row[0].splitlines():
-                mq.put('#' + str(row[1]) + ' [' + str(row[2]) + '] ' + line)
+                mq.put('#{0:04d} [{1}] {2}'.format(row[1], row[2], line))
 
     # send a random quote to the channel
     def send_quote(self):
@@ -305,7 +305,7 @@ class GikoBot:
             "SELECT quote, rowid, timestamp FROM quotes ORDER BY num_views, random() LIMIT 1").fetchone()
         for line in row[0].splitlines():
             self.send_privmsg(
-                CHANNEL, '#' + str(row[1]) + ' [' + str(row[2]) + '] ' + line)
+                CHANNEL, '#{0:04d} [{1}] {2}'.format(row[1], row[2], line))
 
         db.execute(
             "UPDATE quotes set num_views = num_views + 1 where rowid = ?", (row[1],))
@@ -319,7 +319,7 @@ class GikoBot:
             "SELECT quote, rowid, timestamp FROM quotes ORDER BY rowid DESC LIMIT 1").fetchone()
         for line in row[0].splitlines():
             self.send_privmsg(
-                CHANNEL, '#' + str(row[1]) + ' [' + str(row[2]) + '] ' + line)
+                CHANNEL, '#{0:04d} [{1}] {2}'.format(row[1], row[2], line))
 
 #############
 # FUNCTIONS #
